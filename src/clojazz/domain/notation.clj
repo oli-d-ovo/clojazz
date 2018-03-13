@@ -3,3 +3,5 @@
 (def ! :rest)
 
 (def - :tie)
+
+(def x :hit)

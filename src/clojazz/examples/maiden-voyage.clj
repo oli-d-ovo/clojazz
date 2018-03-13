@@ -4,7 +4,7 @@
 
 (def v [4 7 9 11])
 
-(deftune maiden-voyage
+(def maiden-voyage
   {:tempo :medium
    :swing true
 
