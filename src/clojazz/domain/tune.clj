@@ -1,5 +1,6 @@
 (ns clojazz.domain.tune
-  (:require [clojure.walk :refer [postwalk-replace]]))
+  (:require [clojure.walk :refer [postwalk-replace]]
+            [clojure.set :refer [difference]]))
 
 (def ^:private notation
   {'x :hit
@@ -16,15 +17,21 @@
 
 (defn ^:private replace-symbols
   [smap]
-  (partial postwalk-replace smap))
+  (let [interns (->> (ns-interns *ns*)
+                     keys)
+        clean-smap (apply dissoc smap interns)
+        cleaned-symbols (difference (set (keys smap))
+                                    (set (keys clean-smap)))]
+    (when (not-empty cleaned-symbols)
+      (println "WARNING: You have used reserved symbols in your namespace. This may cause unwanted behaviour.")
+      (println "Using your definitions of:" cleaned-symbols))
+    (partial postwalk-replace clean-smap)))
 
 (defmacro deftune
   [tune-name & {tune-voicings :voicings :as spec}]
-  (let [voicings# (merge voicings tune-voicings)]
-    `(def ~tune-name
-       ~(-> spec
-            (dissoc :voicings)
-            (update-in [:sections] (replace-symbols (select-keys notation ['! '-])))
-            (update-in [:rhythm] (replace-symbols notation))
-            (update-in [:rhythm :bass] (replace-symbols intervals))
-            (update-in [:rhythm :chords] (replace-symbols voicings#))))))
+  `(def ~tune-name
+     ~(-> spec
+          (update-in [:sections] (replace-symbols (select-keys notation ['! '-])))
+          (update-in [:rhythm] (replace-symbols notation))
+          (update-in [:rhythm :bass] (replace-symbols intervals))
+          (update-in [:rhythm :chords] (replace-symbols voicings)))))

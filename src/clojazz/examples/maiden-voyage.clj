@@ -1,6 +1,8 @@
 (ns clojazz.examples.maiden-voyage
   (:require [clojazz.domain.tune :refer [deftune]]))
 
+(def v [4 7 9 11])
+
 (deftune maiden-voyage
   :tempo :medium
   :groove :swing
@@ -24,8 +26,6 @@
              [[:Db :7sus4]       ] [-] [-] [-]]}]
   :start-at {:section 0 :bar 1 :beat 4}
   :play-sequence [1 2 3]
-
-  :voicings {v [4 7 9 11]}
 
   :rhythm
   {:ride   [[x     x [x x] -] [[x x] [x x] -      -     ]]
