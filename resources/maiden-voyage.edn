@@ -6,19 +6,20 @@
 
   {:melody [[:D           ] [-] [-] [~ ~ ~ [:C :D]]
             [[:Eb :F] :D  ] [-] [-] [~ ~ ~ [:A :D]]]
-   :chords [[:D7sus4      ] [-] [-] [-]
-            [:F7sus4      ] [-] [-] [-]]}
+   :chords [[[:D :7sus4]  ] [-] [-] [-]
+            [[:F :7sus4]  ] [-] [-] [-]]}
 
   {:melody [[:D           ] [-] [-] [~ ~ ~ [:C :D]]
             [[:Eb :F] :D  ] [-] [-] [~ ~ ~ [:C :F]]]
-   :chords [[:D7sus4      ] [-] [-] [-]
-            [:F7sus4      ] [-] [-] [-]]}
+   :chords [[[:D :7sus4]  ] [-] [-] [-]
+            [[:F :7sus4]  ] [-] [-] [-]]}
 
   {:melody [[:F           ] [-] [-] [~ ~ ~ [:Eb :E]]
             [[:E :Gb] :Db ] [-] [-] [~ ~ ~ [:A  :D]]]
-   :chords [[:Eb7sus4     ] [-] [-] [-]
-            [:Db7sus4     ] [-] [-] [-]]}]
- :start-at [0 4]
+   :chords [[[:Eb :7sus4] ] [-] [-] [-]
+            [[:Db :7sus4] ] [-] [-] [-]]}]
+ :start-at [#section 0
+            #bar [1 4]]
  :repeat [1 2 3]
 
  :rhythm
