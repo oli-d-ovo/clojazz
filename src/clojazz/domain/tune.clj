@@ -17,8 +17,7 @@
 
 (defn ^:private replace-symbols
   [smap]
-  (let [interns (->> (ns-interns *ns*)
-                     keys)
+  (let [interns (->> (ns-interns *ns*) keys)
         clean-smap (apply dissoc smap interns)
         cleaned-symbols (difference (set (keys smap))
                                     (set (keys clean-smap)))]
