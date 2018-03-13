@@ -3,22 +3,22 @@
 Lead sheets as code.
 
 ## Notation
-A single bar is represented as a vector. Each element in that vector is a whole beat, and the elements can themselves be vectors allowing subdivisions within beats. The number of elements in the subvectors determine the length of the subdivisions. For example `[:D :G]` would be eighth notes, `[:D ~ :G]` would be twelfth notes, `[:D ~ :G ~]` would be sixteenths, and so on.
+A single bar is represented as a vector. Each element in that vector is a whole beat, and the elements can themselves be vectors allowing subdivisions within beats. The number of elements in the subvectors determine the length of the subdivisions. For example `[:D :G]` would be eighth notes, `[:D ! :G]` would be twelfth notes, `[:D ! :G !]` would be sixteenths, and so on.
 
 ### Examples
 
 A whole note could be written as `[:D]`, `[:D - - -]` , `[[:D] -]`.
 
-A half note could be written as `[:D ~]`, `[:D - ~ ~]` , `[[:D] ~]`.
+A half note could be written as `[:D !]`, `[:D - ! !]` , `[[:D] !]`.
 
-A quarter note could be written as `[:D ~ ~ ~]`, `[[:D] ~ ~ ~]`.
+A quarter note could be written as `[:D ! ! !]`, `[[:D] ! ! !]`.
 
 ## Special symbols
 
 ### Generic
 Tie: `-`
 
-Rest: `~`
+Rest: `!`
 
 ### Rhythm section
 Hit (for drums): `x`
