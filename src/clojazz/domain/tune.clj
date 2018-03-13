@@ -27,7 +27,7 @@
     (partial postwalk-replace clean-smap)))
 
 (defmacro deftune
-  [tune-name & {tune-voicings :voicings :as spec}]
+  [tune-name & spec]
   `(def ~tune-name
      ~(-> spec
           (update-in [:sections] (replace-symbols (select-keys notation ['! '-])))
