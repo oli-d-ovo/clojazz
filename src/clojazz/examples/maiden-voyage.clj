@@ -1,35 +1,33 @@
 (ns clojazz.examples.maiden-voyage
-  (:require [clojazz.domain.notation :refer :all]
-            [clojazz.domain.intervals :refer :all]))
+  (:require [clojazz.domain.tune :refer [deftune]]))
 
-(def v [4 7 9 11])
+(deftune maiden-voyage
+  :tempo :medium
+  :groove :swing
 
-(def maiden-voyage
-  {:tempo :medium
-   :swing true
+  :sections
+  [{:melody [[- - - [:A3 :D4]]]}
 
-   :sections
-   [{:melody [[- - - [:A :D]]]}
+   {:melody [[:D4                ] [-] [-] [! - - [:C4 :D4]]
+             [[:Eb4 :F4] :C4  - -] [-] [-] [! - - [:A3 :D4]]]
+    :chords [[[:D :7sus4]        ] [-] [-] [-]
+             [[:F :7sus4]        ] [-] [-] [-]]}
 
-    {:melody [[:D             ] [-] [-] [! - - [:C :D]]
-              [[:Eb :F] :D - -] [-] [-] [! - - [:A :D]]]
-     :chords [[[:D :7sus4]    ] [-] [-] [-]
-              [[:F :7sus4]    ] [-] [-] [-]]}
+   {:melody [[:D4                ] [-] [-] [! - - [:C4 :D4]]
+             [[:E4b :F4] :C4  - -] [-] [-] [! - - [:C4 :F4]]]
+    :chords [[[:D :7sus4]        ] [-] [-] [-]
+             [[:F :7sus4]        ] [-] [-] [-]]}
 
-    {:melody [[:D             ] [-] [-] [! - - [:C :D]]
-              [[:Eb :F] :D - -] [-] [-] [! - - [:C :F]]]
-     :chords [[[:D :7sus4]    ] [-] [-] [-]
-              [[:F :7sus4]    ] [-] [-] [-]]}
+   {:melody [[:F4                ] [-] [-] [! - - [:Eb4 :E4]]
+             [[:E4 :Gb4] :Db4 - -] [-] [-] [! - - [:A3  :D4]]]
+    :chords [[[:Eb :7sus4]       ] [-] [-] [-]
+             [[:Db :7sus4]       ] [-] [-] [-]]}]
+  :start-at {:section 0 :bar 1 :beat 4}
+  :play-sequence [1 2 3]
 
-    {:melody [[:F             ] [-] [-] [! - - [:Eb :E]]
-              [[:E :Gb] :Db   ] [-] [-] [! - - [:A  :D]]]
-     :chords [[[:Eb :7sus4]   ] [-] [-] [-]
-              [[:Db :7sus4]   ] [-] [-] [-]]}]
-   :start-at {:section 0
-              :bar [1 4]}
-   :sequence [1 2 3]
+  :voicings {v [4 7 9 11]}
 
-   :rhythm
-   {:ride   [[x     x [x x] -] [[x x] [x x] -      -     ]]
-    :bass   [[[r !] r [- r] -] [-     [- r] [- p5] [o p5]]]
-    :chords [[[v !] v [- v] -] [-     [- v] -      -     ]]}})
+  :rhythm
+  {:ride   [[x     x [x x] -] [[x x] [x x] -      -     ]]
+   :bass   [[[r !] r [- r] -] [-     [- r] [- p5] [o p5]]]
+   :chords [[[v !] v [- v] -] [-     [- v] -      -     ]]})
