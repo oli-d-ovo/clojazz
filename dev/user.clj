@@ -32,12 +32,13 @@
 
 (def kick (sample (freesound-path 2086)))
 
-(def res 8)
+(def res 2)
 (def metro (metronome (* res 100)))
 
 (defn play
   [tempo notes sound-fn]
   (let [notes (cycle notes)
+        subdivisions (count notes)
         beat (metro)
         next-beat (metro (+ (dec res) beat))]
     (at next-beat (sound-fn (first notes)))
