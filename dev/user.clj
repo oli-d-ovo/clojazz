@@ -30,20 +30,43 @@
       (Thread/sleep 1000))
     (recur (next-fn tonal-centre amount) next-fn amount)))
 
+(defn- wrap-in
+  [empty-coll x]
+  (if (= (type x) (type empty-coll))
+    x
+    (conj empty-coll x)))
+
 (def res 40320)
 (def meter 4)
 (def ticks-in-bar (* res meter))
 
+(defn- play*
+  ([sound-fn metro length tick notes]
+   (play* sound-fn metro length tick notes (/ length (count notes))))
+  ([sound-fn metro length tick [note :as notes] tpn]
+   (if note
+     (let [next-tick (+ tick tpn)]
+       (at (metro tick) (sound-fn note))
+       (apply-by (metro next-tick)
+                 #'play* [sound-fn metro length next-tick (rest notes) tpn])))))
+
+(defn- looper
+  [sound-fn metro length tick notes]
+  (let [subdivisions (count notes)
+        tpn (/ length subdivisions)
+        next-tick (+ tick tpn)
+        next-note (peek notes)
+        notes (conj (pop notes) next-note)]
+    (at (metro tick) (play* sound-fn metro tpn tick next-note))
+    (apply-by (metro next-tick)
+              #'looper [sound-fn metro length next-tick notes])))
+
 (defn play
   ([notes sound-fn tempo]
    (let [metro (metronome (* res tempo))
-         notes (into (clojure.lang.PersistentQueue/EMPTY) notes)]
+         notes (->> notes
+                    (map (partial wrap-in []))
+                    (into (clojure.lang.PersistentQueue/EMPTY)))]
      (play notes sound-fn metro 0)))
   ([notes sound-fn metro tick]
-   (let [subdivisions (count notes)
-         next-note (peek notes)
-         notes (conj (pop notes) next-note)
-         tpb (/ ticks-in-bar subdivisions)
-         next-tick (+ tpb tick)]
-     (at (metro tick) (sound-fn next-note))
-     (apply-by (metro next-tick) play notes sound-fn metro next-tick []))))
+   (looper sound-fn metro ticks-in-bar tick notes)))
