@@ -8,7 +8,7 @@
   :groove :swing
 
   :sections
-  [{:melody [[- - - [:A3 :D4]]]}
+  [{:melody  [                              [- - - [:A3 :D4]]]}
 
    {:melody  [[:D4                ] [-] [-] [! - - [:C4 :D4]]
               [[:Eb4 :F4] :C4  - -] [-] [-] [! - - [:A3 :D4]]]

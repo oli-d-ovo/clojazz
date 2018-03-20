@@ -13,9 +13,9 @@
    'o  12})
 
 (def ^:private voicings
-  {'drop2 [5 1 3 7]})
+  {'d2 [5 1 3 7]})
 
-(defn ^:private replace-symbols
+(defn ^:private clean-symbols
   [smap]
   (let [interns (->> (ns-interns *ns*) keys)
         clean-smap (apply dissoc smap interns)
@@ -24,7 +24,11 @@
     (when (not-empty cleaned-symbols)
       (println "WARNING: You have used reserved symbols in your namespace. This may cause unwanted behaviour.")
       (println "Using your definitions of:" cleaned-symbols))
-    (partial postwalk-replace clean-smap)))
+    cleaned-symbols))
+
+(defn ^:private replace-symbols
+  [smap]
+  (partial postwalk-replace (clean-symbols smap)))
 
 (defmacro deftune
   [tune-name & spec]
