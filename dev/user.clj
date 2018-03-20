@@ -36,19 +36,34 @@
     x
     (conj empty-coll x)))
 
+(definst saw-wave [freq 440 attack 0.01 sustain 0.4 release 0.1 vol 0.4]
+  (* (env-gen (lin attack sustain release) 1 1 0 1 FREE)
+     (saw freq)
+     vol))
+
+(definst triangle-wave [freq 440 attack 0.01 sustain 0.1 release 0.4 vol 0.4]
+  (* (env-gen (lin attack sustain release) 1 1 0 1 FREE)
+     (lf-tri freq)
+     vol))
+
 (def res 40320)
 (def meter 4)
 (def ticks-in-bar (* res meter))
+
+(def ! :rest)
+(def - :tie)
 
 (defn- play*
   ([sound-fn metro length tick notes]
    (play* sound-fn metro length tick notes (/ length (count notes))))
   ([sound-fn metro length tick [note :as notes] tpn]
-   (if note
-     (let [next-tick (+ tick tpn)]
-       (at (metro tick) (sound-fn note))
-       (apply-by (metro next-tick)
-                 #'play* [sound-fn metro length next-tick (rest notes) tpn])))))
+   (let [next-tick (+ tick tpn)]
+     (at (metro tick) (case note
+                        :rest (stop)
+                        :tie identity
+                        (sound-fn note)))
+     (apply-by (metro next-tick)
+               #'play* [sound-fn metro length next-tick (rest notes) tpn]))))
 
 (defn- looper
   [sound-fn metro length tick notes]
@@ -70,3 +85,30 @@
      (play notes sound-fn metro 0)))
   ([notes sound-fn metro tick]
    (looper sound-fn metro ticks-in-bar tick notes)))
+
+(declare play-form)
+
+(defn play-nested-form
+  [sound-fn metro tick length form]
+  (let [next-tick (+ tick length)]
+    (at (metro tick) (play-form sound-fn metro length tick (first form)))
+    (apply-by (metro next-tick) #'play-form [sound-fn metro length next-tick (rest form)])))
+
+(defn play-form
+  [sound-fn metro length tick form]
+  (cond
+    (coll? form) (let [length (/ length (count form))]
+                   (play-nested-form sound-fn metro tick length form))
+    (= :rest form) (stop)
+    (= :tie form) form
+    :else (sound-fn form)))
+
+(defn play-bars
+  [sound-fn tempo bars & {:keys [meter
+                                 loop]
+                          :or {meter 4
+                               loop false}}]
+  (let [ticks-in-bar (* res meter)
+        length (* ticks-in-bar (count bars))
+        metro (metronome (* res tempo))]
+    (play-form sound-fn metro length (metro) bars)))
