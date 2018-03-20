@@ -30,16 +30,20 @@
       (Thread/sleep 1000))
     (recur (next-fn tonal-centre amount) next-fn amount)))
 
-(def kick (sample (freesound-path 2086)))
-
 (def res 2)
-(def metro (metronome (* res 100)))
+(def meter 4)
+(def ticks-in-bar (* res meter))
 
 (defn play
-  [tempo notes sound-fn]
-  (let [notes (cycle notes)
-        subdivisions (count notes)
-        beat (metro)
-        next-beat (metro (+ (dec res) beat))]
-    (at next-beat (sound-fn (first notes)))
-    (apply-by (metro (+ (dec res) beat)) play tempo (rest notes) sound-fn [])))
+  ([notes sound-fn tempo]
+   (let [metro (metronome (* res tempo))
+         notes (into (clojure.lang.PersistentQueue/EMPTY) notes)]
+     (play notes sound-fn metro (metro))))
+  ([notes sound-fn metro tick]
+   (let [subdivisions (count notes)
+         next-note (peek notes)
+         notes (conj (pop notes) next-note)
+         tpb (/ ticks-in-bar subdivisions)
+         next-tick (+ tpb tick)]
+     (at (metro tick) (sound-fn next-note))
+     (apply-by (metro next-tick) play notes sound-fn metro next-tick []))))
