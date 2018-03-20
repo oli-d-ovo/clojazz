@@ -8,11 +8,11 @@
 (defn play-nested-form
   [sound-fn metro tick length form]
   (let [next-tick (+ tick length)]
-    (at (metro tick) (play-form sound-fn metro length tick (first form)))
-    (apply-by (metro next-tick) #'play-form [sound-fn metro length next-tick (rest form)])))
+    (at (metro tick) (play-form sound-fn metro tick length (first form)))
+    (apply-by (metro next-tick) #'play-form [sound-fn metro next-tick length (rest form)])))
 
 (defn play-form
-  [sound-fn metro length tick form]
+  [sound-fn metro tick length form]
   (cond
     (coll? form) (let [length (/ length (count form))]
                    (play-nested-form sound-fn metro tick length form))
