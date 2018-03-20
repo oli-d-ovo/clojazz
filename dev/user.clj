@@ -30,7 +30,7 @@
       (Thread/sleep 1000))
     (recur (next-fn tonal-centre amount) next-fn amount)))
 
-(def res 2)
+(def res 40320)
 (def meter 4)
 (def ticks-in-bar (* res meter))
 
@@ -38,7 +38,7 @@
   ([notes sound-fn tempo]
    (let [metro (metronome (* res tempo))
          notes (into (clojure.lang.PersistentQueue/EMPTY) notes)]
-     (play notes sound-fn metro (metro))))
+     (play notes sound-fn metro 0)))
   ([notes sound-fn metro tick]
    (let [subdivisions (count notes)
          next-note (peek notes)
