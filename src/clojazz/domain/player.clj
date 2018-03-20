@@ -25,5 +25,6 @@
                           :or {meter 4 loop false}}]
   (let [ticks-in-bar (* res meter)
         length (* ticks-in-bar (count bars))
-        metro (metronome (* res tempo))]
-    (play-form sound-fn metro length (metro) bars)))
+        metro (metronome (* res tempo))
+        tick (metro)]
+    (play-form sound-fn metro tick length bars)))
