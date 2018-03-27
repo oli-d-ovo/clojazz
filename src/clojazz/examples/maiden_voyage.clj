@@ -26,7 +26,7 @@
               [[:Db :7sus4]       ] [-] [-] [-]]}]
   :start-at {:section 0 :bar 1}
   :play-sequence [1 2 3]
-  :repeat true
+  :repeat false
 
   :rhythm
   {:ride   [[x     x [x x] -] [[x x] [x x] -      -     ]]

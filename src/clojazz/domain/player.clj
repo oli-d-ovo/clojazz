@@ -38,22 +38,23 @@
 (defn- starting-sequence
   [{:keys [sections
            start-at]}]
-  (->> sections
-       (nth (:section start-at))
-       :melody
-       (drop (dec (:bar start-at)))
-       (map #(map note %))))
+  (as-> sections $
+       (nth $ (:section start-at))
+       (:melody $)
+       (drop (dec (:bar start-at)) $)
+       (map #(map note %) $)
+       (apply concat $)))
 
 (defn- tune-sequence
   [{:keys [sections
            play-sequence
            repeat]}]
-  (let [bars (-> sections
-                 (select-keys play-sequence) ;recursify this to allow sequences of sequences
-                 vals
-                 (map :melody)
-                 (map #(map note %))
-                 (apply concat))]
+  (let [bars (as-> sections $
+                   (select-keys $ play-sequence) ;recursify this to allow sequences of sequences
+                   (vals $)
+                   (map :melody $)
+                   (map #(map note %) $)
+                   (apply concat $))]
     (if repeat
       (cycle [bars])
       bars)))
@@ -65,4 +66,4 @@
         main-section (tune-sequence tune)
         bars (cons starting-section main-section)]
     (play-bars identity tune-tempo bars
-               {:meter (or (:meter tune) 4)})))
+               :meter (or (:meter tune) 4))))
