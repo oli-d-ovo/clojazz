@@ -3,6 +3,12 @@
 
 (def res 40320)
 
+(def tempo
+  (let [i (rand-int 30)]
+    {:slow (+ i 105)
+     :medium (+ i 135)
+     :fast (+ i 165)}))
+
 (declare play-form)
 
 (defn play-nested-form
