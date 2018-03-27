@@ -6,18 +6,18 @@ sections:
 
  - melody:  [[D4               ] [-] [-] [! - - [C4 D4]]
              [[Eb4 F4] C4   - -] [-] [-] [! - - [A3 D4]]]
-   harmony: [[[D 7sus4]        ] [-] [-] [-]
-             [[F 7sus4]        ] [-] [-] [-]]
+   harmony: [[D7sus4           ] [-] [-] [-]
+             [F7sus4           ] [-] [-] [-]]
 
  - melody:  [[D4               ] [-] [-] [! - - [C4 D4]]
              [[Eb4 F4] C4   - -] [-] [-] [! - - [C4 F4]]]
-   harmony: [[[D 7sus4]        ] [-] [-] [-]
-             [[F 7sus4]        ] [-] [-] [-]]
+   harmony: [[D7sus4           ] [-] [-] [-]
+             [F7sus4           ] [-] [-] [-]]
 
  - melody:  [[F4               ] [-] [-] [! - - [Eb4 E4]]
              [[E4 Gb4] Db4  - -] [-] [-] [! - - [A3  D4]]]
-   harmony: [[[Eb 7sus4]       ] [-] [-] [-]
-             [[Db 7sus4]       ] [-] [-] [-]]
+   harmony: [[Eb7sus4          ] [-] [-] [-]
+             [Db7sus4          ] [-] [-] [-]]
 
 start-at:
   section: 0
