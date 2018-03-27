@@ -4,7 +4,7 @@
 (def v [4 7 9 11])
 
 (deftune maiden-voyage
-  :tempo :medium
+  :tempo :slow
   :groove :swing
 
   :sections
@@ -26,6 +26,7 @@
               [[:Db :7sus4]       ] [-] [-] [-]]}]
   :start-at {:section 0 :bar 1 :beat 4}
   :play-sequence [1 2 3]
+  :repeat true
 
   :rhythm
   {:ride   [[x     x [x x] -] [[x x] [x x] -      -     ]]
