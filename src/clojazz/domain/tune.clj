@@ -24,7 +24,7 @@
     (when (not-empty cleaned-symbols)
       (println "WARNING: You have used reserved symbols in your namespace. This may cause unwanted behaviour.")
       (println "Using your definitions of:" cleaned-symbols))
-    cleaned-symbols))
+    clean-smap))
 
 (defn ^:private replace-symbols
   [smap]
@@ -32,9 +32,10 @@
 
 (defmacro deftune
   [tune-name & spec]
-  `(def ~tune-name
-     ~(-> spec
-          (update-in [:sections] (replace-symbols (select-keys notation ['! '-])))
-          (update-in [:rhythm] (replace-symbols notation))
-          (update-in [:rhythm :bass] (replace-symbols intervals))
-          (update-in [:rhythm :chords] (replace-symbols voicings)))))
+  (let [spec (apply hash-map spec)]
+    `(def ~tune-name
+       ~(-> spec
+            (update :sections (replace-symbols (clean-symbols (select-keys notation ['! '-]))))
+            (update :rhythm (replace-symbols notation))
+            (update-in [:rhythm :bass] (replace-symbols intervals))
+            (update-in [:rhythm :chords] (replace-symbols voicings))))))
