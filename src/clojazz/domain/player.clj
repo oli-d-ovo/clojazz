@@ -1,5 +1,6 @@
 (ns clojazz.domain.player
-  (:require [overtone.live :refer [at apply-by stop metronome]]))
+  (:require [overtone.live :refer [at apply-by stop metronome]]
+            [clojazz.domain.note :refer [note]]))
 
 (def res 40320)
 
@@ -40,7 +41,8 @@
   (->> sections
        (nth (:section start-at))
        :melody
-       (drop (dec (:bar start-at)))))
+       (drop (dec (:bar start-at)))
+       (map #(map note %))))
 
 (defn- tune-sequence
   [{:keys [sections
@@ -50,6 +52,7 @@
                  (select-keys play-sequence) ;recursify this to allow sequences of sequences
                  vals
                  (map :melody)
+                 (map #(map note %))
                  (apply concat))]
     (if repeat
       (cycle [bars])
