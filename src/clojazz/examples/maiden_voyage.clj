@@ -24,7 +24,7 @@
               [[:E4 :Gb4] :Db4 - -] [-] [-] [! - - [:A3  :D4]]]
     :harmony [[[:Eb :7sus4]       ] [-] [-] [-]
               [[:Db :7sus4]       ] [-] [-] [-]]}]
-  :start-at {:section 0 :bar 1 :beat 4}
+  :start-at {:section 0 :bar 1}
   :play-sequence [1 2 3]
   :repeat true
 

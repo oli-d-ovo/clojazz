@@ -27,10 +27,39 @@
     :else (sound-fn form)))
 
 (defn play-bars
-  [sound-fn tempo bars & {:keys [meter loop]
-                          :or {meter 4 loop false}}]
+  [sound-fn tempo bars & {:keys [meter]}]
   (let [ticks-in-bar (* res meter)
         length (* ticks-in-bar (count bars))
         metro (metronome (* res tempo))
         tick (metro)]
     (play-form sound-fn metro tick length bars)))
+
+(defn- starting-sequence
+  [{:keys [sections
+           start-at]}]
+  (->> sections
+       (nth (:section start-at))
+       :melody
+       (drop (dec (:bar start-at)))))
+
+(defn- tune-sequence
+  [{:keys [sections
+           play-sequence
+           repeat]}]
+  (let [bars (-> sections
+                 (select-keys play-sequence) ;recursify this to allow sequences of sequences
+                 vals
+                 (map :melody)
+                 (apply concat))]
+    (if repeat
+      (cycle [bars])
+      bars)))
+
+(defn play-tune
+  [tune]
+  (let [tune-tempo (tempo (:tempo tune))
+        starting-section (starting-sequence tune)
+        main-section (tune-sequence tune)
+        bars (cons starting-section main-section)]
+    (play-bars identity tune-tempo bars
+               {:meter (or (:meter tune) 4)})))
