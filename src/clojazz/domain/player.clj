@@ -1,5 +1,6 @@
 (ns clojazz.domain.player
-  (:require [overtone.live :refer [at apply-by stop metronome]]
+  (:require [clojure.walk :refer [postwalk]]
+            [overtone.live :refer [at apply-by stop metronome]]
             [clojazz.domain.note :refer [note]]))
 
 (def res 40320)
@@ -33,10 +34,9 @@
 (defn play-bars
   [sound-fn tempo bars & {:keys [meter]}]
   (let [ticks-in-bar (* res meter)
-        length (* ticks-in-bar (count bars))
         metro (metronome (* res tempo))
         tick (metro)]
-    (play-form sound-fn metro tick length bars)))
+    (play-form sound-fn metro tick ticks-in-bar bars)))
 
 (defn- starting-sequence
   [{:keys [sections start-at]}]
@@ -44,7 +44,7 @@
        (nth $ (:section start-at))
        (:melody $)
        (drop (dec (:bar start-at)) $)
-       (map #(map note %) $)
+       (postwalk note $)
        (apply concat $)))
 
 (defn- tune-sequence
@@ -53,17 +53,17 @@
                    (select-keys $ play-sequence) ;recursify this to allow sequences of sequences
                    (vals $)
                    (map :melody $)
-                   (map #(map note %) $)
+                   (postwalk note $)
                    (apply concat $))]
     (if repeat
       (cycle [bars])
       bars)))
 
 (defn play-tune
-  [tune]
+  [tune sound-fn]
   (let [tune-tempo (tempo (:tempo tune))
         starting-section (starting-sequence tune)
         main-section (tune-sequence tune)
         bars (cons starting-section main-section)]
-    (play-bars identity tune-tempo bars
+    (play-bars sound-fn tune-tempo bars
                :meter (or (:meter tune) 4))))
