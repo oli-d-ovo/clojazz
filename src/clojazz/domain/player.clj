@@ -15,14 +15,17 @@
 (defn play-nested-form
   [sound-fn metro tick length form]
   (let [next-tick (+ tick length)]
-    (at (metro tick) (play-form sound-fn metro tick length (first form)))
+    (at (metro tick) (let [next-form (first form)
+                           length (if (coll? next-form)
+                                    (/ length (count next-form))
+                                    length)]
+                       (play-form sound-fn metro tick length next-form)))
     (apply-by (metro next-tick) #'play-form [sound-fn metro next-tick length (rest form)])))
 
 (defn play-form
-  [sound-fn metro tick length form]
+  [sound-fn metro tick length form & keep-length?]
   (cond
-    (coll? form) (let [length (/ length (count form))]
-                   (play-nested-form sound-fn metro tick length form))
+    (coll? form) (play-nested-form sound-fn metro tick length form)
     (= :rest form) (stop)
     (= :tie form) form
     :else (sound-fn form)))
@@ -36,8 +39,7 @@
     (play-form sound-fn metro tick length bars)))
 
 (defn- starting-sequence
-  [{:keys [sections
-           start-at]}]
+  [{:keys [sections start-at]}]
   (as-> sections $
        (nth $ (:section start-at))
        (:melody $)
@@ -46,9 +48,7 @@
        (apply concat $)))
 
 (defn- tune-sequence
-  [{:keys [sections
-           play-sequence
-           repeat]}]
+  [{:keys [sections play-sequence repeat]}]
   (let [bars (as-> sections $
                    (select-keys $ play-sequence) ;recursify this to allow sequences of sequences
                    (vals $)
