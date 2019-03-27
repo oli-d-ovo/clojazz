@@ -1,7 +1,7 @@
 (ns clojazz.domain.player
   (:require [clojure.walk :refer [postwalk]]
             [overtone.live :refer [at apply-by stop metronome]]
-            [clojazz.domain.note :refer [note]]))
+            [clojazz.domain.note :refer [note chord]]))
 
 (def res 40320)
 
@@ -10,6 +10,11 @@
     {:slow (+ i 105)
      :medium (+ i 135)
      :fast (+ i 165)}))
+
+(defn- play-chord
+  [sound-fn notes]
+  (doseq [note notes]
+    (sound-fn note)))
 
 (declare play-form)
 
@@ -26,6 +31,7 @@
 (defn play-form
   [sound-fn metro tick length form & keep-length?]
   (cond
+    (set? form) (play-chord sound-fn form)
     (coll? form) (play-nested-form sound-fn metro tick length form)
     (= :rest form) (stop)
     (= :tie form) form
@@ -38,23 +44,37 @@
         tick (metro)]
     (play-form sound-fn metro tick ticks-in-bar bars)))
 
+(defn- melody->notes
+  [melody]
+  (postwalk note melody))
+
+(defn- harmony->notes
+  [harmony]
+  (println harmony)
+  (map chord harmony))
+
+(defn- section->notes
+  [{:keys [melody harmony]}]
+  (concat (melody->notes melody)
+          (harmony->notes harmony)))
+
 (defn- starting-sequence
   [{:keys [sections start-at]}]
   (as-> sections $
-       (nth $ (:section start-at))
-       (:melody $)
-       (drop (dec (:bar start-at)) $)
-       (postwalk note $)
-       (apply concat $)))
+    (nth $ (:section start-at))
+    (section->notes $)))
+
+(defn- get-sequence
+  [{:keys [sections play-sequence]}]
+  (-> sections
+      (select-keys play-sequence);recursify this to allow sequences of sequences
+      vals))
 
 (defn- tune-sequence
-  [{:keys [sections play-sequence repeat]}]
+  [{:keys [repeat] :as sections}]
   (let [bars (as-> sections $
-                   (select-keys $ play-sequence) ;recursify this to allow sequences of sequences
-                   (vals $)
-                   (map :melody $)
-                   (postwalk note $)
-                   (apply concat $))]
+                   (get-sequence $)
+                   (map section->notes $))]
     (if repeat
       (cycle [bars])
       bars)))
@@ -64,6 +84,8 @@
   (let [tune-tempo (tempo (:tempo tune))
         starting-section (starting-sequence tune)
         main-section (tune-sequence tune)
-        bars (cons starting-section main-section)]
-    (play-bars sound-fn tune-tempo bars
-               :meter (or (:meter tune) 4))))
+        sections (cons starting-section main-section)]
+    (println sections)
+    (doseq [section sections]
+      (play-bars sound-fn tune-tempo section
+                 :meter (or (:meter tune) 4)))))

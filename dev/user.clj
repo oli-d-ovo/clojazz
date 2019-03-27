@@ -104,10 +104,8 @@
     :else (sound-fn form)))
 
 (defn play-bars
-  [sound-fn tempo bars & {:keys [meter
-                                 loop]
-                          :or {meter 4
-                               loop false}}]
+  [sound-fn tempo bars & {:keys [meter loop]
+                          :or {meter 4 loop false}}]
   (let [ticks-in-bar (* res meter)
         length (* ticks-in-bar (count bars))
         metro (metronome (* res tempo))]
